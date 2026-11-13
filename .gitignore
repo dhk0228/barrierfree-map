@@ -1,0 +1,31 @@
+# 이전 버전과 활동보고서 보관본
+/BFM_v1.0/
+/BFM_v2.1/
+/BFM_v3.0/
+/BFM_v3.1/
+/BFM_v3.2/
+/BFM_이전_혼합_보관_실행금지/
+/*.hwp
+/*.hwpx
+
+# 로컬 의존성, 발표 파일, 검증 산출물
+node_modules/
+dist/
+/BFM_v3.3/04_디버그_빌드/
+/BFM_v3.3/01_발표용_실행/
+.bfm-*-test-*/
+*.exe
+*.log
+
+# 로컬 DB 및 내보내기
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.geojson
+
+# 로컬 환경 파일
+.env
+.env.*

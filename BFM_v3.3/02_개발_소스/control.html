@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>배리어 프리 맵 운영 콘솔 v3.3</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="control.css" />
+  </head>
+  <body>
+    <main class="console">
+      <header class="console-header">
+        <div>
+          <h1>배리어 프리 맵</h1>
+          <p class="muted">운영 콘솔 v3.3</p>
+        </div>
+        <span class="status" id="server-status" role="status">연결 확인 중</span>
+      </header>
+      <section class="actions" aria-label="운영 작업">
+        <a class="button button-primary" href="/" target="_blank" rel="noopener">
+          웹 지도 열기 <span aria-hidden="true">↗</span>
+        </a>
+        <button id="refresh" class="button button-secondary" type="button">데이터 새로고침</button>
+      </section>
+      <section class="stats" aria-label="데이터 현황">
+        <article>
+          <span>등록 장소</span><strong id="node-count">–</strong
+          ><small>개</small>
+        </article>
+        <article>
+          <span>위험 구역</span><strong id="polygon-count">–</strong
+          ><small>개</small>
+        </article>
+        <article>
+          <span>검토됨</span><strong id="verified-count">–</strong
+          ><small>개</small>
+        </article>
+        <article>
+          <span>검토 필요</span><strong id="review-count">–</strong
+          ><small>개</small>
+        </article>
+      </section>
+      <section class="panel change-panel" aria-labelledby="last-change-title">
+        <h2 id="last-change-title">최근 변경</h2>
+        <div role="status" aria-atomic="true">
+          <p id="last-change">데이터를 확인하는 중입니다.</p>
+          <time id="last-change-time" hidden></time>
+        </div>
+      </section>
+      <section class="grid">
+        <section class="panel">
+          <h2>최근 갱신 장소</h2>
+          <div id="recent-nodes" class="items"></div>
+        </section>
+        <section class="panel">
+          <h2>최근 갱신 위험 구역</h2>
+          <div id="recent-polygons" class="items"></div>
+        </section>
+      </section>
+      <section class="panel import-panel">
+        <h2>백업·가져오기</h2>
+        <p class="note" id="merge-help">
+          GeoJSON을 현재 DB에 병합합니다. 새 항목은 추가하고, 같은 원본 ID는 파일의 수정 시각이 더 최신일 때 갱신합니다. 기존 항목은 삭제하지 않습니다.
+        </p>
+        <div class="actions">
+          <a class="button button-secondary" href="/api/export.geojson" download>GeoJSON 내보내기</a>
+          <button class="button button-secondary" type="button" id="btn-import" aria-describedby="merge-help">GeoJSON 가져오기 · 병합</button>
+          <input id="import-file" type="file" accept=".geojson,.json,application/geo+json,application/json" hidden />
+        </div>
+        <p id="import-status" class="message" role="status"></p>
+        <details id="import-result" class="import-result" hidden></details>
+        <h2>최근 가져오기</h2>
+        <div id="recent-imports" class="items"></div>
+      </section>
+      <section class="panel data-panel">
+        <div class="panel-title">
+          <h2>로컬 데이터</h2>
+          <button id="copy-path" class="text-button" type="button">
+            경로 복사
+          </button>
+        </div>
+        <p id="database-path" class="path">불러오는 중…</p>
+      </section>
+      <footer>
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+      </footer>
+    </main>
+    <script src="bfm-api.js"></script>
+    <script src="control.js"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "name": "barrier-free-map",
+  "version": "3.3.0",
+  "description": "Barrier Free Map v3.3 local map and operator console",
+  "author": "COMEDUWEB",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "node server.js",
+    "desktop": "electron .",
+    "dist:win": "electron-builder --win portable",
+    "test": "node test.js && node test-data-bootstrap.js && node test-registration.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "leaflet": "^1.9.4",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "electron": "^37.4.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.barrierfreemap.v33",
+    "productName": "BFM 운영 콘솔 v3.3",
+    "icon": "exe 아이콘.ico",
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/sqlite3/**"
+    ],
+    "files": [
+      "package.json",
+      "electron-main.js",
+      "data-bootstrap.js",
+      "server.js",
+      "bfm-api.js",
+      "app.js",
+      "style.css",
+      "barrier_free_map.html",
+      "control.html",
+      "control.css",
+      "control.js",
+      "exe 아이콘.ico",
+      "assets/**",
+      "node_modules/**",
+      "!node_modules/puppeteer/**",
+      "!node_modules/@puppeteer/**",
+      "tokens.css",
+      "registration.js"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "executableName": "BFM-v3.3"
+    },
+    "portable": {
+      "artifactName": "배리어프리맵_2026컴에듀웹프로젝트_v3.3.exe"
+    },
+    "directories": {
+      "output": "../04_디버그_빌드/release"
+    }
+  }
+}
