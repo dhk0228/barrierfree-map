@@ -7,12 +7,14 @@
 /BFM_이전_혼합_보관_실행금지/
 /*.hwp
 /*.hwpx
+/*.pdf
 
 # 로컬 의존성, 발표 파일, 검증 산출물
 node_modules/
 dist/
 /BFM_v3.3/04_디버그_빌드/
 /BFM_v3.3/01_발표용_실행/
+/BFM_v3.3_Sites/
 .bfm-*-test-*/
 *.exe
 *.log

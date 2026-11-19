@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>배리어 프리 맵 v3.3 · Sites</title>
+    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="tokens.css" /><link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="map" aria-label="배리어 프리 지도"></div>
+    <div
+      id="map-status"
+      class="map-status"
+      role="status"
+      aria-live="polite"
+      hidden
+    ></div>
+    <section
+      id="route-float"
+      class="route-float"
+      hidden
+      aria-live="polite"
+    ></section>
+    <section id="map-summary" class="map-summary" aria-label="지도 데이터 현황" aria-live="polite"></section>
+    <div class="map-actions" aria-label="지도 도구">
+      <button
+        id="btn-overview"
+        class="icon-button"
+        type="button"
+        title="전체 장소 보기"
+        aria-label="전체 장소 보기"
+      >
+        <img src="assets/icons/overview.svg" alt="" />
+      </button>
+      <button
+        id="btn-my-location"
+        class="icon-button"
+        type="button"
+        title="내 위치로 이동"
+        aria-label="내 위치로 이동"
+      >
+        <img src="assets/icons/location.svg" alt="" />
+      </button>
+      <button id="btn-add-place" class="icon-button" type="button" title="장소 등록" aria-label="장소 등록"><img src="assets/icons/plus.svg" alt="" /></button>
+    </div>
+
+    <aside id="sidebar" class="sheet" data-size="middle">
+      <button
+        id="btn-sheet-toggle"
+        class="sheet-handle"
+        type="button"
+        aria-expanded="true"
+        aria-label="작업 패널 접기 또는 펼치기"
+      >
+        <span></span>
+      </button>
+      <header class="sidebar-header">
+        <div>
+          <p class="eyebrow">BARRIER FREE MAP · V3.3</p>
+          <a class="console-link" href="/control">운영 콘솔 열기</a>
+          <h1>
+            배리어 프리 맵
+            <button
+              id="btn-info-open"
+              class="info-button"
+              type="button"
+              title="안내 및 범례"
+              aria-label="안내 및 범례 열기"
+            >
+              <img class="ui-icon" src="assets/icons/info.svg" alt="" />
+            </button>
+          </h1>
+          <p>2026 여름 컴에듀웹 프로젝트</p>
+        </div>
+        <button
+          id="btn-contrast"
+          class="contrast-button"
+          type="button"
+          aria-pressed="false"
+        >
+          고대비
+        </button>
+      </header>
+      <nav class="tabs" aria-label="주요 메뉴">
+        <button class="tab active" data-tab="tab-search" type="button">
+          검색
+        </button>
+        <button class="tab" data-tab="tab-list" type="button">목록</button>
+        <button class="tab" data-tab="tab-zone" type="button">구역</button>
+        <button class="tab" data-tab="tab-data" type="button">데이터</button>
+      </nav>
+      <main>
+        <section id="tab-search" class="tab-content active">
+          <article class="card search-card">
+            <div class="card-heading">
+              <span><img class="ui-icon" src="assets/icons/search.svg" alt="" /></span>
+              <div>
+                <h2>등록 장소 검색</h2>
+                <p>원하는 장소를 찾아 지도에서 확인하세요.</p>
+              </div>
+            </div>
+            <div class="search-row">
+              <input
+                aria-label="등록 장소 검색"
+                id="global-search"
+                class="input-field"
+                placeholder="등록된 장소 이름"
+                autocomplete="off"
+              /><button
+                id="btn-global-search"
+                class="button button-primary"
+                type="button"
+              >
+                검색
+              </button>
+            </div>
+            <div
+              id="geocode-results"
+              class="result-list"
+              aria-live="polite"
+            ></div>
+          </article>
+          <section id="selected-place" class="card selected-place" hidden aria-live="polite"></section>
+          <details class="card route-card" id="route-workflow">
+            <summary>출발·도착 지정 <span id="route-progress">0 / 2</span></summary>
+            <div class="card-heading">
+              <span><img class="ui-icon" src="assets/icons/route.svg" alt="" /></span>
+              <div>
+                <h2>이동 경로 확인</h2>
+                <p>등록 장소에서 출발지와 도착지를 선택하세요.</p>
+              </div>
+            </div>
+            <label class="field-label" for="input-start">출발지</label>
+            <div class="autocomplete-wrap">
+              <input
+                id="input-start"
+                class="input-field"
+                autocomplete="off"
+                placeholder="등록 장소 선택"
+              />
+              <div id="autocomplete-list-start" class="autocomplete-list"></div>
+            </div>
+            <button
+              id="btn-swap-route"
+              class="swap-button"
+              type="button"
+              aria-label="출발지와 도착지 바꾸기"
+              title="출발지와 도착지 바꾸기"
+            >
+              <img class="ui-icon" src="assets/icons/swap.svg" alt="" />
+            </button>
+            <label class="field-label" for="input-end">도착지</label>
+            <div class="autocomplete-wrap">
+              <input
+                id="input-end"
+                class="input-field"
+                autocomplete="off"
+                placeholder="등록 장소 선택"
+              />
+              <div id="autocomplete-list-end" class="autocomplete-list"></div>
+            </div>
+            <label class="check-row"
+              ><input
+                type="checkbox"
+                id="search-wheelchair-mode"
+                checked
+              /><span>♿ 등록 데이터·위험구역 참고 경로 우선</span></label
+            >
+            <div class="button-row">
+              <button
+                id="btn-search"
+                disabled
+                class="button button-primary"
+                type="button"
+              >
+                경로 찾기</button
+              ><button
+                id="btn-clear-path"
+                class="button button-secondary"
+                type="button"
+              >
+                초기화
+              </button>
+            </div>
+            <p class="route-note">
+              등록 데이터 기반 참고 경로이며 실제 이동 가능성을 보장하지
+              않습니다.
+            </p>
+          </details>
+        </section>
+        <section id="tab-list" class="tab-content">
+          <div class="section-top">
+            <div>
+              <h2>등록 장소</h2>
+              <p>카드를 누르면 지도 위치를 확인합니다.</p>
+            </div>
+            <select
+              id="filter-category"
+              class="filter-select"
+              aria-label="장소 분류 필터"
+            >
+              <option value="all">전체</option>
+              <option value="building">🏢 건축물</option>
+              <option value="ramp">♿ 경사로</option>
+              <option value="elevator">↕️ 엘리베이터</option>
+              <option value="transport">🚌 교통</option>
+              <option value="toilet">🚻 화장실</option>
+              <option value="obstacle">⚠️ 장애물</option>
+              <option value="other">기타</option>
+            </select>
+          </div>
+          <div id="coord-list" class="item-list" aria-live="polite"></div>
+        </section>
+        <section id="tab-zone" class="tab-content">
+          <article class="card zone-card">
+            <div class="card-heading">
+              <span><img class="ui-icon" src="assets/icons/zone.svg" alt="" /></span>
+              <div>
+                <h2>위험 구역 설정</h2>
+                <p>공사 구간이나 접근이 어려운 구역을 지도에 표시합니다.</p>
+              </div>
+            </div>
+            <ol id="drawing-steps" class="steps">
+              <li class="active">그리기 시작</li>
+              <li>지도에서 점 추가</li>
+              <li>저장</li>
+            </ol>
+            <label
+              id="polygon-name-wrap"
+              class="field-label"
+              for="polygon-name"
+              hidden
+              >위험 구역 이름<input
+                id="polygon-name"
+                class="input-field"
+                maxlength="100"
+                placeholder="예: 공사 중인 보행로"
+            /></label>
+            <div class="button-row">
+              <button
+                id="btn-draw-polygon"
+                class="button button-primary"
+                type="button"
+              >
+                구역 그리기 시작</button
+              ><button
+                id="btn-undo-polygon"
+                class="button button-secondary"
+                type="button"
+                hidden
+              >
+                마지막 점 취소</button
+              ><button
+                id="btn-reset-polygon"
+                class="button button-secondary"
+                type="button"
+                hidden
+              >
+                경계 다시 그리기</button
+              ><button
+                disabled aria-describedby="polygon-hint" id="btn-finish-polygon"
+                class="button button-primary"
+                type="button"
+                hidden
+              >
+                저장</button
+              ><button
+                id="btn-cancel-polygon"
+                class="button button-secondary"
+                type="button"
+                hidden
+              >
+                취소
+              </button>
+            </div>
+            <p id="polygon-hint" class="hint" hidden>
+              지도에서 세 지점 이상을 누른 뒤 저장하세요.
+            </p>
+          </article>
+          <div class="section-top">
+            <div>
+              <h2>등록된 위험 구역</h2>
+              <p>경로 확인 시 주의 구간으로 반영됩니다.</p>
+            </div>
+          </div>
+          <div id="polygon-list-container" class="item-list"></div>
+        </section>
+        <section id="tab-data" class="tab-content">
+          <article class="card">
+            <div class="card-heading">
+              <span><img class="ui-icon" src="assets/icons/chart.svg" alt="" /></span>
+              <div>
+                <h2>수집 현황</h2>
+                <p>등록 정보와 검토 상태를 한눈에 확인합니다.</p>
+              </div>
+            </div>
+            <div id="stats-container" class="stats-grid"></div>
+          </article>
+          <article class="card">
+            <h2 class="plain-heading">최근 데이터 변경</h2>
+            <div id="recent-changes" class="compact-list"></div>
+          </article>
+          <article class="card">
+            <div class="card-heading">
+              <span><img class="ui-icon" src="assets/icons/archive.svg" alt="" /></span>
+              <div>
+                <h2>백업·가져오기</h2>
+                <p>새 항목은 추가하고, 같은 원본 ID는 파일의 수정 시각이 더 최신일 때 갱신합니다. 기존 항목은 삭제하지 않습니다.</p>
+              </div>
+            </div>
+            <div class="button-row">
+              <a
+                id="btn-export"
+                class="button button-secondary"
+                href="/api/export.geojson"
+                download
+                >GeoJSON 내보내기</a
+              ><button type="button" id="btn-import" class="button button-secondary"
+                >GeoJSON 가져오기 · 병합</button
+              ><input
+                id="import-file"
+                type="file"
+                accept=".geojson,.json,application/geo+json,application/json"
+                hidden
+              />
+            </div>
+            <details id="import-result" class="import-result" hidden open></details>
+          </article>
+
+        </section>
+      </main>
+    </aside>
+
+    <div
+      id="node-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="node-modal-title"
+      hidden
+    >
+      <form id="node-form" class="modal-content">
+        <div class="modal-title">
+          <div>
+            <p class="eyebrow">PLACE DETAILS</p>
+            <h2 id="node-modal-title">장소 등록</h2>
+          </div>
+          <button
+            id="btn-modal-cancel"
+            class="close-button"
+            type="button"
+            aria-label="닫기"
+          >
+            ×
+          </button>
+        </div>
+        <p id="node-location-help" class="modal-help">선택한 위치에 장소 정보를 등록합니다.</p>
+        <p id="node-save-error" class="notice" role="alert" hidden></p>
+        <label class="field-label" for="node-name">장소 이름</label
+        ><input
+          id="node-name"
+          class="input-field"
+          maxlength="100"
+          required
+        /><label class="field-label" for="node-category">시설 분류</label
+        ><select id="node-category" class="input-field">
+          <option value="building">🏢 건축물</option>
+          <option value="ramp">♿ 경사로/진입로</option>
+          <option value="elevator">↕️ 엘리베이터</option>
+          <option value="transport">🚌 정류장/교통</option>
+          <option value="toilet">🚻 장애인 화장실</option>
+          <option value="obstacle">⚠️ 장애물/주의구간</option>
+          <option value="other">기타</option>
+        </select>
+        <fieldset>
+          <legend>접근성 정보</legend>
+          <label class="check-row"
+            ><input type="checkbox" id="attr-wheelchair" checked /><span
+              >휠체어 접근 가능</span
+            ></label
+          ><label class="check-row"
+            ><input type="checkbox" id="attr-braille" /><span
+              >점자 블록 있음</span
+            ></label
+          ><label class="check-row"
+            ><input type="checkbox" id="attr-toilet" /><span
+              >장애인 화장실 포함</span
+            ></label
+          >
+        </fieldset>
+        <details>
+          <summary>검토 정보와 사진 추가</summary>
+          <label class="field-label" for="verification-status">검토 상태</label
+          ><select id="verification-status" class="input-field">
+            <option value="not_reviewed">검토 필요</option>
+            <option value="verified">검토됨</option>
+            <option value="needs_update">정보 업데이트 필요</option></select
+          ><label class="field-label" for="verified-at">마지막 확인일</label
+          ><input id="verified-at" class="input-field" type="date" /><label
+            class="field-label"
+            for="source-note"
+            >확인 메모</label
+          ><textarea
+            id="source-note"
+            class="input-field"
+            maxlength="500"
+            rows="3"
+            placeholder="예: 현장 방문으로 출입구 경사로 확인"
+          ></textarea
+          ><label class="field-label" for="node-image">현장 사진 URL</label
+          ><input
+            id="node-image"
+            class="input-field"
+            type="url"
+            placeholder="https://..."
+          />
+        </details>
+        <div class="button-row modal-actions">
+          <button
+            id="btn-modal-secondary"
+            class="button button-secondary"
+            type="button"
+          >
+            취소</button
+          ><button class="button button-primary" type="submit">저장하기</button>
+        </div>
+      </form>
+    </div>
+    <div
+      id="info-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="info-modal-title"
+      hidden
+    >
+      <section class="modal-content">
+        <div class="modal-title">
+          <div>
+            <p class="eyebrow">GUIDE & LEGEND</p>
+            <h2 id="info-modal-title">안내 및 범례</h2>
+          </div>
+          <button
+            id="btn-info-close"
+            class="close-button"
+            type="button"
+            aria-label="닫기"
+          >
+            ×
+          </button>
+        </div>
+        <p class="modal-help">
+          지도 위를 누르면 장소를 등록하고, 위험 구역 탭에서 주의 구간을 추가할
+          수 있습니다.
+        </p>
+        <p class="notice">
+          ⚠️ 안심 경로는 등록 정보와 위험구역을 참고한 안내입니다. 실제 이동 전
+          현장 상태를 확인해 주세요.
+        </p>
+        <div id="legend" class="legend"></div>
+      </section>
+    </div>
+    <dialog id="delete-dialog" class="confirm-dialog" aria-labelledby="delete-title"><form method="dialog"><p class="eyebrow">DELETE PLACE</p><h2 id="delete-title">삭제하시겠어요?</h2><p id="delete-message"></p><p class="muted">삭제 후에는 백업 파일로 복원할 수 있습니다.</p><div class="button-row"><button class="button button-secondary" value="cancel" autofocus>취소</button><button class="button button-danger" value="delete"><img class="ui-icon" src="assets/icons/trash.svg" alt="" />삭제</button></div></form></dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script src="/vendor/leaflet/leaflet.js"></script>
+    <script src="bfm-api.js"></script>
+    <script src="registration.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

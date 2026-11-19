@@ -1,0 +1,18 @@
+/* Soft Field Desk · 지도와 운영 콘솔이 공유하는 디자인 기준 */
+:root {
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:40px;
+  --radius:24px;
+  --primary:#7036cf; --primary-dark:#53219f; --primary-soft:#f4edff;
+  --ink:#202238; --muted:#62667a; --border:#dfe1ea; --danger:#aa2445; --success:#146347;
+  --surface-map:rgba(255,255,255,.84); --surface-paper:#fff; --surface-muted:#f5f7fb; --surface-selected:#f4edff;
+  --paper:var(--surface-paper); --paper-soft:var(--surface-muted);
+  --shadow-rest:0 4px 14px rgba(23,32,51,.06); --shadow-raised:0 12px 28px rgba(23,32,51,.12); --shadow-modal:0 28px 70px rgba(15,23,42,.26);
+  --shadow:var(--shadow-raised); --shadow-soft:var(--shadow-rest);
+  --motion-press:120ms; --motion-enter:180ms; --motion-sheet:240ms; --ease-standard:cubic-bezier(.2,.8,.2,1);
+}
+[hidden] { display:none !important; }
+:focus-visible { outline:3px solid #53219f !important; outline-offset:3px; }
+button:disabled { cursor:not-allowed; }
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+}
